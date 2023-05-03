@@ -30,13 +30,14 @@ counter_lock = asyncio.Lock()
 counter = 0
 request_limit = 100
 
-@app.get("/complete")
-async def complete(text: str):
+@app.get("/persona")
+async def update(text: str):
+    global prompt
     global counter
-    async with counter_lock:
-        counter += 1
-        if counter > request_limit:
-            return {"error": f"This endpoint is no longer available after {request_limit} requests."}
+    prompt = text
+    response_text = {"message": "Persona updated successfully", "new_persona": text}
+    log(counter, text)
+    return rreturn {"error": f"This endpoint is no longer available after {request_limit} requests."}
 
     openai_response = openai.ChatCompletion.create(
         model=model,
@@ -48,4 +49,12 @@ async def complete(text: str):
 
     log(counter, text)
     response_text = {"response": openai_response.choices[0].message.content}
-    return response_text
+    return response_textesponse_text
+
+@app.get("/complete")
+async def complete(text: str):
+    global counter
+    async with counter_lock:
+        counter += 1
+        if counter > request_limit:
+            
