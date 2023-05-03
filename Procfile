@@ -1,1 +1,1 @@
-     web: python -m uvicorn app:app --reload
+     web: python -m uvicorn main:app --host=0.0.0.0 --port=${PORT}
