@@ -1,4 +1,3 @@
-import loader
 import os
 from fastapi import FastAPI
 import openai, asyncio
