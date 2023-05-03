@@ -4,7 +4,7 @@ from fastapi import FastAPI
 import openai, asyncio
 from fastapi.middleware.cors import CORSMiddleware
 
-openai.api_key = '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'#os.environ.get('openai')
+openai.api_key = os.environ.get('openai')
 model = 'gpt-3.5-turbo'
 prompt = "Keep your response short, time is limited! You are on a spaceship, stranded, without hope..."
 history = []
