@@ -1,10 +1,17 @@
 #os.environ.get('openai')
+"""
+230508 by O. Person & D. Masley
+TODO:
+* check history size so that it doesn't overflow API
+* summarizing chat history
+* endpoint for loading history
+"""
 import os
 from fastapi import FastAPI, Depends
 import openai, asyncio
 from fastapi.middleware.cors import CORSMiddleware
 
-openai.api_key = os.environ.get('openai')
+openai.api_key = os.environ.get('openaikey')
 model = 'gpt-3.5-turbo'
 metaprompt = lambda x: f"You are the AI of this space ship. Keep your response short, time is limited! The persona that defines your character and tasks is given enclosed by >>><<< here >>>{x}<<<. You are to follow that persona directly and respond with your own short message. Here is the chat so far:"
 history = []
@@ -49,20 +56,18 @@ async def update(text: str):
 async def complete(text: str, counter: int = Depends(counter_dependency)):
     global history
     global prompt
-    history.append(text)
+    history.append({"role":"user", "content":text})
     async with counter_lock:
         counter += 1
         if counter > request_limit:
             return {"error": f"This endpoint is no longer available after {request_limit} requests."}
     openai_response = openai.ChatCompletion.create(
         model=model,
-        messages=[
-            {"role": "system", "content": metaprompt(prompt)},
-            {"role": "user", "content": "\n".join(history[-7:])},
-        ]
+        messages=[{"role":"system","content":metaprompt(prompt)}]+history[-14:]
     )
-    log(counter, text, history)
-    response_text = {"response": openai_response.choices[0].message.content}
+    response_text = openai_response.choices[0].message.content
+    history.append({"role":"assistant","content":response_text})
+    log(counter, history)
     return response_text
 
 @app.get("/status")
