@@ -64,3 +64,11 @@ async def complete(text: str, counter: int = Depends(counter_dependency)):
     log(counter, text, history)
     response_text = {"response": openai_response.choices[0].message.content}
     return response_text
+
+@app.get("/status")
+async def status():
+    global prompt
+    global counter
+    global history
+    response_text = {"message": "Printing current status", "prompt": text, "counter": counter, "history": history}
+    return response_text
