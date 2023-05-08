@@ -70,5 +70,5 @@ async def status():
     global prompt
     global counter
     global history
-    response_text = {"message": "Printing current status", "prompt": text, "counter": counter, "history": history}
+    response_text = {"message": "Printing current status", "prompt": prompt, "counter": counter, "history": history}
     return response_text
