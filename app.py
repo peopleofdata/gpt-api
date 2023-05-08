@@ -77,3 +77,19 @@ async def status():
     global history
     response_text = {"message": "Printing current status", "prompt": prompt, "counter": counter, "history": history}
     return response_text
+
+@app.post("/update_history")
+async def update_history(uploaded_history: list):
+    global history
+    history = uploaded_history
+    response_text = {"message": "Chat history updated successfully", "new_history": history}
+    log(history)
+    return response_text
+
+@app.post("/update_status")
+async def update_history(uploaded_status: dict):
+    global history
+    history = uploaded_status['history']
+    response_text = {"message": "Chat history updated successfully", "new_history": history}
+    log(history)
+    return response_text
