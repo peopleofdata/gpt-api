@@ -13,7 +13,7 @@ from fastapi.middleware.cors import CORSMiddleware
 
 openai.api_key = os.environ.get('openaikey')
 model = 'gpt-3.5-turbo'
-metaprompt = lambda x: f"You are the AI of this space ship. Keep your response short, time is limited! The persona that defines your character and tasks is given enclosed by >>><<< here >>>{x}<<<. You are to follow that persona directly and respond with your own short message. Here is the chat so far:"
+metaprompt = lambda x: f"You name is Nal, you are the AI of this space ship. You only respond when asked by your name, otherwise say nothing. Keep your response short, time is limited! The persona that defines your character and tasks is given enclosed by >>><<< here >>>{x}<<<. You are to follow that persona directly and respond with your own short message."
 history = []
 
 app = FastAPI()
@@ -35,7 +35,7 @@ app.add_middleware(
 
 log = print
 
-prompt = "You will respond shortly, helpful and wittingly, throwing is smart jokes where appropriate to keep the morale up. Your response shall never be longer than 30 words. You shall being every response with a short well-structured JSON with populated fields: emotions (a list of user's emotions in last message), entities (list of named entities in user's text) and topic (a list with what is user's last message about)."
+prompt = "You will respond shortly, helpful and wittingly, throwing is smart jokes where appropriate to keep the morale up. Your response shall never be longer than 30 words. You shall being every response with a short well-structured JSON with populated fields: emotions (a list of user's emotions in last message), entities (list of named entities in user's text), topic (a list with what is user's last message about) and response (your reply to user's text)."
 counter_lock = asyncio.Lock()
 counter = 0
 request_limit = 100
