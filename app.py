@@ -10,6 +10,7 @@ import os
 from fastapi import FastAPI, Depends
 import openai, asyncio
 from fastapi.middleware.cors import CORSMiddleware
+from gsheet import write_to_gsheet
 
 openai.api_key = os.environ.get('openaikey')
 model = 'gpt-3.5-turbo'
@@ -56,7 +57,13 @@ async def update(text: str):
 async def complete(text: str, counter: int = Depends(counter_dependency)):
     global history
     global prompt
-    history.append({"role":"user", "content":text})
+    user_msg = {"role":"user", "content":text}
+    log(counter, user_msg)
+    history.append(user_msg)
+    try:
+        write_to_gsheet(user_msg)
+    except:
+        log('Gsheet writing problems')
     async with counter_lock:
         counter += 1
         if counter > request_limit:
@@ -66,8 +73,13 @@ async def complete(text: str, counter: int = Depends(counter_dependency)):
         messages=[{"role":"system","content":metaprompt(prompt)}]+history[-14:]
     )
     response_text = openai_response.choices[0].message.content
-    history.append({"role":"assistant","content":response_text})
-    log(counter, history)
+    assistant_msg={"role":"assistant","content":response_text}
+    log(counter, assistant_msg)
+    history.append(assistant_msg)
+    try:
+        write_to_gsheet(assistant_msg)
+    except:
+        log('Gsheet writing problems')
     return response_text
 
 @app.get("/status")
