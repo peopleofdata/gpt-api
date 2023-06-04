@@ -2,3 +2,4 @@ openai
 fastapi
 asyncio
 uvicorn
+pygsheets
