@@ -13,8 +13,8 @@ from fastapi.middleware.cors import CORSMiddleware
 from gsheet import write_to_gsheet
 
 openai.api_key = os.environ.get('openaikey')
-model = 'gpt-3.5-turbo'
-metaprompt = lambda x: f"You are the AI of this space ship. You only respond when, otherwise say only '...'. Keep your response short, time is limited! The persona that defines your character and tasks is given enclosed by >>><<< here >>>{x}<<<. You are to follow that persona directly and respond with your own short message."
+model = 'gpt-4'
+metaprompt = lambda x: f"You are the AI of this space ship. Keep your JSON response short, time is limited! The persona that defines your character and tasks is given enclosed by >>><<< here >>>{x}<<<. You are to follow that persona directly and respond with your own short JSON message. You must always produce a valid JSON as defined by the persona!"
 #metaprompt = lambda x: f"{x}"
 history = []
 
@@ -37,7 +37,7 @@ app.add_middleware(
 
 log = print
 
-prompt = "You will respond shortly, helpful and wittingly, throwing is smart jokes where appropriate to keep the morale up. Your response shall never be longer than 30 words. You shall being every response with a short well-structured JSON with populated fields: emotions (a list of user's emotions in last message), entities (list of named entities in user's text), topic (a list with what is user's last message about) and response (your reply to user's text)."
+prompt = "You shall begin every response with a short well-structured JSON with populated fields 'emotions','topics' and 'response' like this: 'emotions' (a list of user's emotions in last message), 'topic' (a list with what is user's last message about) and 'response' (your reply to user's text which will most often be '...' when you have not much to add, if the user addressed another user or whenever the user does not address you directly). Remember, unless asked directly as AI your JSON's response will only contain '...'. When you are the subject of user's query and when you have something interesting to say, your JSON['response'] will be shortly, helpful and witty, throwing is smart jokes where appropriate to keep the morale up. Your JSON['response'] shall never be longer than 30 words. Before you answer, double-check that your JSON['response'] makes it for a good conversation with user's last message, otherwise set JSON['response'] to '...' "
 #prompt = "You will tell everyone to go frolick themselves"
 counter_lock = asyncio.Lock()
 counter = 0
