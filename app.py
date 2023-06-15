@@ -59,6 +59,15 @@ async def update(text: str):
     log(counter, text)
     return response_text
 
+@app.post("/speak")
+async def speak(data: dict):
+    user_msg = {"role":"user", "content": data['text']}
+    openai_response = openai.ChatCompletion.create(
+        model='gpt-4',
+        messages=[{"role":"system","content":"You are my savvy assistant, reply to the point and always with a fitting joke."}, user_msg]
+    )
+    return openai_response.choices[0].message.content
+
 @app.get("/complete")
 async def complete(text: str, counter: int = Depends(counter_dependency)):
     global history
